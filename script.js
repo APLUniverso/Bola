@@ -15,14 +15,14 @@ function dibujarLinea(A, B) {
     linea.style.top = A.y + "px";
     linea.style.width = largo + "px";
     linea.style.height = "2px";
-    linea.style.background = "blue";
+    //linea.style.background = "blue";
     linea.style.transformOrigin = "0 50%";
     linea.style.transform = `rotate(${angulo}deg)`;
 }
 
 function moverBall(scapeOption, o = 0) {
     const keys = Object.keys(scapeOption);
-    if (o >= keys.length) return; // caso de salida
+    if (o >= keys.length) return;
 
     const rect = ball.getBoundingClientRect();
     const w = rect.width, h = rect.height;
@@ -43,7 +43,7 @@ function moverBall(scapeOption, o = 0) {
     dibujarLinea(getBallPosition(), destino);
 
     if (chocan(areaPeligro, linea)) {
-      return moverBall(scapeOption, o + 1); // avanzar al siguiente
+        return moverBall(scapeOption, o + 1);
     }
 
     ball.style.transform = `translate(${destino.x}px, ${destino.y}px)`;
@@ -82,13 +82,15 @@ function chocan(el1, el2) {
 
 window.addEventListener("mousemove",(e) => {
     const mausPstn = {x:e.clientX,y:e.clientY}
-    
+    const ballPstn = getBallPosition()
+
     areaPeligro.style.transform = `translate(${mausPstn.x-50}px, ${mausPstn.y-50}px)`;
 
     moverBall(getPosicionEscape(mausPstn))
-    
-    if (chocan(ball,areaPeligro)){
-        console.log("win")
-    }
+
     cdInfo.textContent = getPosicionEscape(mausPstn);
+})
+
+ball.addEventListener("click",()=>{
+    console.log("win")
 })
