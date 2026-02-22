@@ -22,7 +22,7 @@ html, body{
     left: 0;
     top: 0;
 
-    transition: transform 10.5s ease;
+    transition: transform ease;
 
     background-color: red;
     width: 40px;
@@ -39,19 +39,27 @@ html, body{
 }
 
 #victoria{
-    display: none;
     position: absolute;
-    
-    justify-self: center;
-    top: 40%;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
     height: 200px;
     width: 200px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     background-color: blueviolet;
 }
 
 #victoria h1{
     text-align: center;
-    align-self: center;
+}
+
+.invisible{
+    opacity: 0;
+    pointer-events: none;
 }

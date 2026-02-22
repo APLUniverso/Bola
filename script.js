@@ -3,6 +3,8 @@ const ball = document.getElementById("bola")
 const areaPeligro = document.getElementById("jugadorArea")
 const linea = document.getElementById("trayectoria");
 
+const winPanel = document.getElementById("victoria")
+
 function dibujarLinea(A, B) {
     const dx = B.x - A.x;
     const dy = B.y - A.y;
@@ -46,7 +48,12 @@ function moverBall(scapeOption, o = 0) {
         return moverBall(scapeOption, o + 1);
     }
 
+    const velocidad = 4000
+    const distancia = scapeOption[keys[o]]
+    const tiempo = velocidad / distancia
+
     ball.style.transform = `translate(${destino.x}px, ${destino.y}px)`;
+    ball.style.transitionDuration = `${tiempo}s`
 }
 
 function getBallPosition(){
@@ -85,10 +92,10 @@ window.addEventListener("mousemove",(e) => {
     const ballPstn = getBallPosition()
 
     areaPeligro.style.transform = `translate(${mausPstn.x-50}px, ${mausPstn.y-50}px)`;
-
+    cdInfo.textContent = Math.hypot(mausPstn.x-ballPstn.x, mausPstn.y-ballPstn.y)
     moverBall(getPosicionEscape(mausPstn))
 })
 
 ball.addEventListener("click",()=>{
-    cdInfo.textContent = "victoria";
+    winPanel.classList.remove("invisible")
 })
