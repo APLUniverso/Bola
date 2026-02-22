@@ -9,7 +9,6 @@ html, body{
     overflow: hidden;
 }
 
-
 #cordenadasInfo{
     position:fixed;
     left:10px;
@@ -23,7 +22,7 @@ html, body{
     left: 0;
     top: 0;
 
-    transition: transform 5.5s ease;
+    transition: transform 10.5s ease;
 
     background-color: red;
     width: 40px;
@@ -37,4 +36,22 @@ html, body{
     height: 100px;
 
     pointer-events: none;
+}
+
+#victoria{
+    display: none;
+    position: absolute;
+    
+    justify-self: center;
+    top: 40%;
+
+    height: 200px;
+    width: 200px;
+
+    background-color: blueviolet;
+}
+
+#victoria h1{
+    text-align: center;
+    align-self: center;
 }

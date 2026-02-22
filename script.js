@@ -87,10 +87,8 @@ window.addEventListener("mousemove",(e) => {
     areaPeligro.style.transform = `translate(${mausPstn.x-50}px, ${mausPstn.y-50}px)`;
 
     moverBall(getPosicionEscape(mausPstn))
-
-    cdInfo.textContent = getPosicionEscape(mausPstn);
 })
 
 ball.addEventListener("click",()=>{
-    console.log("win")
+    cdInfo.textContent = "victoria";
 })
