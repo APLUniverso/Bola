@@ -9,6 +9,12 @@ html, body{
     overflow: hidden;
 }
 
+#player{
+    background-color: blue;
+    width: 100px;
+    height: 100px;
+}
+
 #cordenadasInfo{
     position:fixed;
     left:10px;
