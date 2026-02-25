@@ -5,16 +5,6 @@ const player = document.getElementById("player")
 
 const winPanel = document.getElementById("victoria")
 
-
-// Estado de la bola
-let velX = 0;
-let velY = 0;
-
-// Configuración de "personalidad"
-const velocidadMaxima = 8;
-const friccion = 0.95; // 1 = no frena, 0.9 = frena rápido
-const sensibilidad = 0.5; // Qué tan fuerte escapa
-
 function getObjectPosition(obj){
     const rect = obj.getBoundingClientRect();
 
@@ -36,54 +26,93 @@ function chocan(el1, el2) {
     );
 }
 
-function moverBall(playPstn,ballPstn) {
-    let ballX = ballPstn.x
-    let dtcX = playPstn.x - ballPstn.x
-    let dtcY = playPstn.y - ballPstn.y
-    let dtcFinla = Math.hypot(dtcX,dtcY)
 
-    if (dtcFinla < 200){
-        let angulo = Math.atan2(dtcY,dtcX)
 
-        let error = (Math.random() - 0.5) * 0.6;
-        let anguloFinal = angulo + error
+// Configuración de "personalidad"
+// Estado global de velocidad
+let velX = 0;
+let velY = 0;
 
-        velX += Math.cos(anguloFinal) * sensibilidad
-        velY += Math.sin(anguloFinal) * sensibilidad
+const velocidadMaxima = 8;
+const friccion = 0.95;
+const sensibilidad = 0.6;
+const radio = 25;
+const distanciaAlerta = 500;
+
+let ballPstn = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+};
+
+function moverBall(playerPstn, ballPstn) {
+
+    let ballX = ballPstn.x;
+    let ballY = ballPstn.y;
+
+    // Vector desde jugador hacia la bola (ESCAPE)
+    let dx = ballX - playerPstn.x;
+    let dy = ballY - playerPstn.y;
+
+    let distancia = Math.hypot(dx, dy);
+
+    if (distancia < distanciaAlerta && distancia > 0) {
+
+        // Normalizamos el vector
+        let dirX = dx / distancia;
+        let dirY = dy / distancia;
+
+        // Fuerza proporcional a qué tan cerca está
+        let fuerza = (distanciaAlerta - distancia) / distanciaAlerta;
+
+        velX += dirX * sensibilidad * fuerza * 5;
+        velY += dirY * sensibilidad * fuerza * 5;
     }
 
-    velX *= friccion
-    velY *= friccion
+    // Ruido pequeño para hacerlo impredecible
+    velX += (Math.random() - 0.5) * 0.2;
+    velY += (Math.random() - 0.5) * 0.2;
 
-    let speed = Math.hypot(velX,velY)
-    if (speed>velocidadMaxima){
+    // Fricción
+    velX *= friccion;
+    velY *= friccion;
+
+    // Limitar velocidad máxima
+    let speed = Math.hypot(velX, velY);
+    if (speed > velocidadMaxima) {
         velX = (velX / speed) * velocidadMaxima;
         velY = (velY / speed) * velocidadMaxima;
     }
 
+    // Aplicar movimiento
     ballX += velX;
     ballY += velY;
 
-    // Límites de pantalla (Para que no se escape del mapa)
-    if (ballX < 0) ballX = 0;
-    if (ballX > window.innerWidth) ballX = window.innerWidth;
-    if (ballY < 0) ballY = 0;
-    if (ballY > window.innerHeight) ballY = window.innerHeight;
-
-    // DIBUJAR (Usamos el centro de la bola como referencia)
-    ball.style.transform = `translate(${ballX - 25}px, ${ballY - 25}px)`;
-}
-
-function getPosicionEscape(mausPosition){
-    const scapeOptions = {
-        sd : Math.hypot(mausPosition.x - 0, mausPosition.y - 0),
-        si : Math.hypot(mausPosition.x - window.innerWidth, mausPosition.y - 0),
-        id : Math.hypot(mausPosition.x - 0, mausPosition.y - window.innerHeight),
-        ii : Math.hypot(mausPosition.x - window.innerWidth, mausPosition.y - window.innerHeight)
+    // REBOTE en bordes
+    if (ballX - radio < 0) {
+        ballX = radio;
+        velX *= -0.8;
     }
-    return Object.fromEntries(Object.entries(scapeOptions).sort(([,va],[,vb]) => vb - va));
-}
 
+    if (ballX + radio > window.innerWidth) {
+        ballX = window.innerWidth - radio;
+        velX *= -0.8;
+    }
+
+    if (ballY - radio < 0) {
+        ballY = radio;
+        velY *= -0.8;
+    }
+
+    if (ballY + radio > window.innerHeight) {
+        ballY = window.innerHeight - radio;
+        velY *= -0.8;
+    }
+
+    // Dibujar
+    ball.style.transform = `translate(${ballX - radio}px, ${ballY - radio}px)`;
+
+    return { x: ballX, y: ballY };
+}
 
 
 const teclas = {}
@@ -103,7 +132,7 @@ function moverPlayer(){
     player.style.transform = `translate(${x}px, ${y}px)`;
 
     const playPstn = getObjectPosition(player)
-    const ballPstn = getObjectPosition(ball)
+    ballPstn = moverBall(playPstn, ballPstn)
 
     cdInfo.textContent = Math.hypot(playPstn.x-ballPstn.x, playPstn.y-ballPstn.y)
     moverBall(playPstn,ballPstn)
